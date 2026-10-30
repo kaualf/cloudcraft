@@ -858,7 +858,7 @@ function Launcher(
                                                         <div class="doc-card">
                                                                 <h3>ABOUT</h3>
                                                                 <p>
-                                                                        Amphibian Launcher runs Minecraft: Java Edition with Fabric entirely in
+                                                                        Cloudcraft runs Minecraft: Java Edition with Fabric entirely in
                                                                         your browser. There is nothing to install — the game is downloaded into
                                                                         private browser storage (OPFS) and runs in its own tab on the .NET
                                                                         WebAssembly runtime.
