@@ -1,4 +1,4 @@
-# Amphibian Launcher
+# Cloudcraft
 
 A Minecraft: Java Edition launcher that runs in your browser. You open a web page, pick a version, press Play, and the game opens in its own full-size tab. You can play vanilla Minecraft or Fabric with mods.
 
@@ -106,73 +106,7 @@ Whatever browser you pick: keep it updated, update your GPU drivers, and close o
 while playing. The Console tab's `[gpu:game]` line tells you in one glance whether you got a
 hardware or a software adapter.
 
-### Performance and FPS
-
-The game renders through a GL-on-WebGPU translation stack, which is much heavier than native
-Minecraft, so vanilla's default video settings can land you at single-digit FPS — especially on
-multiplayer servers. To avoid that first impression, the launcher applies tuned settings
-(render distance 5–8, simulation distance, fast graphics, minimal particles, no entity shadows) to
-`options.txt` exactly once, on the very first launch of the game in a browser profile. How strict
-they are depends on what WebGPU adapter the browser offers: a software adapter (SwiftShader,
-llvmpipe — hardware acceleration off, blocklisted drivers, many Chromebooks, VMs) gets the strict
-set, and the Console log prints a `[gpu:game]` line plus a `[perf]` line showing exactly what was
-applied.
-
-After that first launch the launcher never touches your settings again — change everything in-game
-under Options > Video Settings (or edit `minecraft/options.txt` in the File Manager). Escape
-hatches: `?perf=0` disables the auto defaults entirely, `?perf=1` re-applies them on the next
-launch, and `?wj.IKVM_GAME_OPTIONS=renderDistance:12,...` overrides the preset with your own lines.
-
-If FPS is still low with a hardware adapter in the `[gpu:game]` line, the usual fixes apply:
-hardware acceleration on (chrome://settings/system), current GPU drivers, few other tabs open.
-Note that the game log always shows its device as "(Mesa)" — that is the game's own GL layer, not
-a sign that your GPU is unused; the `[gpu:game]` line is the one that tells the truth.
-
-### Changing the wallpapers
-
-The background pictures are in `frontend/public/backgrounds`. To use your own, put an image there (wide screenshots work best, around 1920 pixels across) and add its file name to the `BACKGROUNDS` list near the top of the launcher code in `frontend/src/main.tsx`. With more than one picture, the launcher fades between them every few seconds.
-
-## Putting it online with GitHub Pages
-
-This repo has a workflow that builds the site and publishes it. It is **manual-only** — it never runs on push, because the build is very heavy and running it on every push can get young accounts flagged by GitHub's automation. Test locally with Docker instead, and run the workflow by hand only when you have a batch of changes ready to go live.
-
-1. Make a public repository on GitHub and push this project to its `main` branch.
-2. In the repository go to Settings, then Pages, then set Source to GitHub Actions.
-3. Open the Actions tab, pick "Build and deploy to GitHub Pages" and press Run workflow — only when you actually want to publish. The first build takes a long time.
-4. When both jobs are green, the site is at `https://<your-username>.github.io/<repository-name>/`.
-
-The first time you open the site it reloads once. That is normal. GitHub Pages can't send the headers the game needs, so a small service worker (`frontend/public/coi-serviceworker.js`) adds them.
-
-Pages sites are limited to 1 GB. If the build is bigger, the deploy fails and the Actions log says so.
-
-## Building it yourself
-
-You need Linux, .NET 10, a JDK, and mono.
-
-1. In the `loader` folder run `sudo dotnet workload restore`.
-2. In the top folder run `make build`.
-3. `make serve` starts a development copy. Don't host that one publicly.
-4. `make publish` makes the real build in `frontend/dist`.
-
-### A note on the `dreamland` dependency
-
-The UI framework (`dreamland`) is vendored as a prebuilt tarball in `vendor/dreamland-0.1.3.tgz` and
-referenced from `frontend/package.json` as `file:../vendor/dreamland-0.1.3.tgz`. The upstream git
-repository does not ship its built `dist/` files (and its build script never runs during a plain
-`npm install` / `pnpm install`), so depending on it directly used to break the whole build with
-"Cannot find module 'dreamland/core'". If you ever want to bump it, clone the repo, run its build,
-`npm pack`, and drop the new tarball in `vendor/`.
-
-## Debugging knobs
-
-- `?netlog=1` on either page turns per-packet network tracing back on. It is off by default because
-  dumping every TCP chunk to the console (and mirroring it into the launcher log) is expensive
-  enough on a multiplayer server to cost a large chunk of FPS.
-- `?perf=0` / `?perf=1` disable or force the first-launch performance defaults (see "Performance
-  and FPS" above); `?wj.IKVM_GAME_OPTIONS=key:value,...` overrides any game option before launch.
-- The Console tab keeps the thread dump / JIT dump / Stop game buttons; memory and FPS stats update
-  there live while a game runs.
 
 ## Credits
 
-This launcher is a front end for ikvmcraft by r58Playz (https://github.com/r58playz/ikvmcraft), which does the hard part: running Minecraft in the browser with mono-wasm and a modified IKVM. All the credit for that goes to them.
+This launcher is a front end for ikvmcraft by r58Playz (https://github.com/r58playz/ikvmcraft), which does the hard part: running Minecraft in the browser with mono-wasm and a modified IKVM. And (https://github.com/AmphibianIsToad/Amphibian-Launcher) to the original launcher. All the credit for that goes to them.
